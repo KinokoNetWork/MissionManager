@@ -8,60 +8,80 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class MissionsManager {
+    private static FileConfiguration config;
+
     private static final List<String> ALL_MISSIONS = Arrays.asList(
-        "BREAK_2000_DIRT",
-        "JUMP_5000_TIMES",
-        "WALK_100KM",
-        "KILL_300_MOBS",
-        "FISH_500_TIMES",
-        "CHAT_2500_TIMES"
+            "BREAK_2000_DIRT",
+            "JUMP_5000_TIMES",
+            "WALK_100KM",
+            "KILL_500_MOBS",
+            "FISH_300_TIMES",
+            "CHAT_2500_TIMES"
     );
 
     private static List<String> activeMissions = new ArrayList<>();
     private static Map<String, Integer> missionProgress = new HashMap<>();
-    
-    public static void loadNewMissions(FileConfiguration config) {
+
+    public static void setConfig(FileConfiguration cfg) {
+        config = cfg;
+    }
+
+    public static void loadNewMissions() {
+        if (config == null) {
+            Bukkit.getLogger().severe("[MissionsPlugin] 設定ファイルがロードされていません！");
+            return;
+        }
+
         Random random = new Random();
         activeMissions.clear();
         missionProgress.clear();
 
         List<String> shuffledMissions = new ArrayList<>(ALL_MISSIONS);
         Collections.shuffle(shuffledMissions, random);
-        
         activeMissions.addAll(shuffledMissions.subList(0, 3));
+
         for (String mission : activeMissions) {
             missionProgress.put(mission, 0);
         }
 
-        config.set("missions.active", activeMissions);
-        config.set("missions.progress", missionProgress);
+        saveProgress();
     }
 
-    public static List<String> getActiveMissions() {
-        return activeMissions;
+    public static void resetMissions() {
+        loadNewMissions();
     }
 
     public static void updateMissionProgress(String mission, int amount) {
-        if (activeMissions.contains(mission)) {
-            missionProgress.put(mission, missionProgress.getOrDefault(mission, 0) + amount);
-            checkMissionCompletion(mission);
-        }
+        if (!activeMissions.contains(mission)) return;
+
+        int currentProgress = missionProgress.getOrDefault(mission, 0);
+        int goal = getMissionGoal(mission);
+
+        if (currentProgress >= goal) return;
+
+        missionProgress.put(mission, Math.min(currentProgress + amount, goal));
+        saveProgress();
+        checkMissionCompletion(mission);
+    }
+
+    private static void saveProgress() {
+        if (config == null) return;
+        config.set("missions.active", activeMissions);
+        config.set("missions.progress", missionProgress);
+        Bukkit.getPluginManager().getPlugin("MissionManager").saveConfig();
     }
 
     private static void checkMissionCompletion(String mission) {
-        int goal = switch (mission) {
-            case "BREAK_2000_DIRT" -> 2000;
-            case "JUMP_5000_TIMES" -> 5000;
-            case "WALK_100KM" -> 100000; // 1ブロックは1mに値するらしい
-            case "KILL_300_MOBS" -> 300;
-            case "FISH_500_TIMES" -> 500;
-            case "CHAT_2500_TIMES" -> 2500;
-            default -> Integer.MAX_VALUE;
-        };
-
-        if (missionProgress.get(mission) >= goal) {
+        if (missionProgress.get(mission) >= getMissionGoal(mission)) {
             rewardPlayers();
             Bukkit.broadcastMessage("§aミッション達成: " + mission);
+        }
+    }
+
+    private static void rewardPlayers() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.getInventory().addItem(new ItemStack(Material.IRON_INGOT, 1));
+            player.sendMessage("§eミッション報酬として鉄1個を受け取りました！");
         }
     }
 
@@ -69,22 +89,19 @@ public class MissionsManager {
         return missionProgress;
     }
 
+    public static List<String> getActiveMissions() {
+        return activeMissions;
+    }
+
     public static int getMissionGoal(String mission) {
         return switch (mission) {
             case "BREAK_2000_DIRT" -> 2000;
             case "JUMP_5000_TIMES" -> 5000;
-            case "WALK_100KM" -> 100000; // 1ブロックは1mに値するらしい
-            case "KILL_300_MOBS" -> 300;
-            case "FISH_500_TIMES" -> 500;
+            case "WALK_100KM" -> 100000;
+            case "KILL_500_MOBS" -> 500;
+            case "FISH_300_TIMES" -> 300;
             case "CHAT_2500_TIMES" -> 2500;
             default -> Integer.MAX_VALUE;
         };
-    }
-
-    private static void rewardPlayers() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.getInventory().addItem(new ItemStack(Material.IRON_INGOT, 3));
-            player.sendMessage("§eミッション報酬として鉄3個を受け取りました！");
-        }
     }
 }

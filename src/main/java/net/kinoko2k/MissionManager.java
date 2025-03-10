@@ -13,14 +13,15 @@ public final class MissionManager extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         FileConfiguration config = getConfig();
+        MissionsManager.setConfig(config);
 
-        MissionsManager.loadNewMissions(config);
+        MissionsManager.loadNewMissions();
         saveConfig();
 
         getServer().getPluginManager().registerEvents(new MissionListener(), this);
         getServer().getPluginManager().registerEvents(new TodoMenuCommand(), this);
 
-        getCommand("todomenu").setExecutor(new TodoMenuCommand());
+        getCommand("daily").setExecutor(new TodoMenuCommand());
 
         Bukkit.getLogger().info("[MissionsPlugin] プラグインが有効化されました！");
     }

@@ -63,8 +63,8 @@ public class TodoMenuCommand implements CommandExecutor, Listener {
             case "BREAK_2000_DIRT" -> "土ブロックを 2000 個壊す";
             case "JUMP_5000_TIMES" -> "ジャンプを 5000 回する";
             case "WALK_100KM" -> "100km 以上歩く";
-            case "KILL_300_MOBS" -> "モンスターを 300 体倒す";
-            case "FISH_500_TIMES" -> "魚を 500 匹釣る";
+            case "KILL_500_MOBS" -> "モンスターを 500 体倒す";
+            case "FISH_300_TIMES" -> "魚を 300 匹釣る";
             case "CHAT_2500_TIMES" -> "チャットを 2500 回送信する";
             default -> "不明なミッション";
         };
