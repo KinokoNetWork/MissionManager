@@ -1,0 +1,11 @@
+name: MissionManager
+version: '1.0.0'
+main: net.kinoko2k.MissionManager
+api-version: '1.21'
+load: STARTUP
+authors: [ Kinoko_2K ]
+commands:
+  todomenu:
+    description: "タスクを管理するコマンド"
+    usage: "/<command>"
+    aliases: [ "tm" ]

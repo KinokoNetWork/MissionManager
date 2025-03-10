@@ -1,0 +1,33 @@
+package net.kinoko2k;
+
+import net.kinoko2k.Commands.TodoMenuCommand;
+import net.kinoko2k.Missions.MissionListener;
+import net.kinoko2k.Missions.MissionsManager;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public final class MissionManager extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+        saveDefaultConfig();
+        FileConfiguration config = getConfig();
+
+        MissionsManager.loadNewMissions(config);
+        saveConfig();
+
+        getServer().getPluginManager().registerEvents(new MissionListener(), this);
+        getServer().getPluginManager().registerEvents(new TodoMenuCommand(), this);
+
+        getCommand("todomenu").setExecutor(new TodoMenuCommand());
+
+        Bukkit.getLogger().info("[MissionsPlugin] プラグインが有効化されました！");
+    }
+
+    @Override
+    public void onDisable() {
+        saveConfig();
+        Bukkit.getLogger().info("[MissionsPlugin] プラグインが無効化されました！");
+    }
+}
