@@ -8,3 +8,10 @@ commands:
   daily:
     description: "タスクを管理するコマンド"
     usage: "/<command>"
+  reloaddaily:
+    description: "ミッションを再読み込みします。"
+    usage: "/reloaddaily"
+    permission: missionmanager.reload
+permissions:
+  missionmanager.reload:
+    default: op
