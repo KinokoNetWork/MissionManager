@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TodoMenuCommand implements CommandExecutor, Listener {
+public class DailyCommand implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -62,10 +62,13 @@ public class TodoMenuCommand implements CommandExecutor, Listener {
         return switch (missionKey) {
             case "BREAK_2000_DIRT" -> "土ブロックを 2000 個壊す";
             case "JUMP_5000_TIMES" -> "ジャンプを 5000 回する";
-            case "WALK_100KM" -> "100km 以上歩く";
+            case "WALK_10KM" -> "10km 以上歩く";
             case "KILL_500_MOBS" -> "モンスターを 500 体倒す";
             case "FISH_300_TIMES" -> "魚を 300 匹釣る";
             case "CHAT_2500_TIMES" -> "チャットを 2500 回送信する";
+            case "DROP_2000_ITEMS" -> "アイテムを 2000 個捨てる";
+            case "STAY_NEAR_KINOKO_20S" -> "Kinoko_2K の周りに 20秒間いる";
+            case "OPEN_3000_INVENTORY" -> "インベントリを 3000 回開く";
             default -> "不明なミッション";
         };
     }
