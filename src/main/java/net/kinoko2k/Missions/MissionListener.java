@@ -36,7 +36,7 @@ public class MissionListener implements Listener {
     @EventHandler
     public void onKillMob(EntityDeathEvent event) {
         if (event.getEntity().getKiller() != null) {
-            MissionsManager.updateMissionProgress("KILL_300_MOBS", 1);
+            MissionsManager.updateMissionProgress("KILL_500_MOBS", 1);
         }
     }
 
