@@ -69,6 +69,8 @@ public class DailyCommand implements CommandExecutor, Listener {
             case "DROP_2000_ITEMS" -> "アイテムを 2000 個捨てる";
             case "STAY_NEAR_KINOKO_20S" -> "Kinoko_2K の周りに 20秒間いる";
             case "OPEN_3000_INVENTORY" -> "インベントリを 3000 回開く";
+            case "CREEPER_EXPLODE_30_TIMES" -> "クリパああああああああああああ";
+            case "DYE_SHEEP_30_TIMES" -> "いや、このピンク羊は、自分で出したわけじゃないっすよ...";
             default -> "不明なミッション";
         };
     }

@@ -1,10 +1,12 @@
 package net.kinoko2k.Missions;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Creeper;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
@@ -19,6 +21,15 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
+import org.bukkit.DyeColor;
+import org.bukkit.block.Block;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -61,11 +72,6 @@ public class MissionListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        MissionsManager.updateMissionProgress("CHAT_2500_TIMES", 1);
-    }
-
-    @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
         MissionsManager.updateMissionProgress("DROP_2000_ITEMS", event.getItemDrop().getItemStack().getAmount());
     }
@@ -73,11 +79,22 @@ public class MissionListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+
+        if (player.getName().equalsIgnoreCase("Kinoko_2K")) {
+            return;
+        }
+
         Player target = Bukkit.getPlayer("Kinoko_2K");
 
         if (target != null && target.isOnline()) {
             Location playerLoc = player.getLocation();
             Location targetLoc = target.getLocation();
+
+            // エラー回避用
+            if (!playerLoc.getWorld().equals(targetLoc.getWorld())) {
+                playerEnterTime.remove(player.getUniqueId());
+                return;
+            }
 
             if (playerLoc.distance(targetLoc) <= 3) {
                 UUID playerId = player.getUniqueId();
@@ -103,5 +120,40 @@ public class MissionListener implements Listener {
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) {
         MissionsManager.updateMissionProgress("OPEN_3000_INVENTORY", 1);
+    }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        MissionsManager.updateMissionProgress("CHAT_2500_TIMES", 1);
+    }
+
+    @EventHandler
+    public void onCreeperExplode(ExplosionPrimeEvent event) {
+        if (event.getEntity() instanceof Creeper) {
+            MissionsManager.updateMissionProgress("CREEPER_EXPLODE_30_TIMES", 1);
+        }
+    }
+
+    @EventHandler
+    public void onSheepDye(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked() instanceof Sheep) {
+            Player player = event.getPlayer();
+            ItemStack item = player.getInventory().getItemInMainHand();
+
+            if (isDye(item)) {
+                MissionsManager.updateMissionProgress("DYE_SHEEP_30_TIMES", 1);
+            }
+        }
+    }
+
+    private boolean isDye(ItemStack item) {
+        if (item == null) return false;
+
+        return switch (item.getType()) {
+            case INK_SAC, RED_DYE, GREEN_DYE, LAPIS_LAZULI, COCOA_BEANS,
+                 PURPLE_DYE, CYAN_DYE, LIGHT_GRAY_DYE, GRAY_DYE, PINK_DYE,
+                 LIME_DYE, YELLOW_DYE, LIGHT_BLUE_DYE, MAGENTA_DYE, ORANGE_DYE, BONE_MEAL -> true;
+            default -> false;
+        };
     }
 }

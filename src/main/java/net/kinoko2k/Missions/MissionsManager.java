@@ -19,7 +19,9 @@ public class MissionsManager {
             "CHAT_2500_TIMES",
             "DROP_2000_ITEMS",
             "STAY_NEAR_KINOKO_20S",
-            "OPEN_3000_INVENTORY"
+            "OPEN_3000_INVENTORY",
+            "CREEPER_EXPLODE_30_TIMES",
+            "DYE_SHEEP_30_TIMES"
     );
 
     private static List<String> activeMissions = new ArrayList<>();
@@ -112,6 +114,8 @@ public class MissionsManager {
             case "DROP_2000_ITEMS" -> 2000;
             case "STAY_NEAR_KINOKO_20S" -> 1;
             case "OPEN_3000_INVENTORY" -> 3000;
+            case "CREEPER_EXPLODE_30_TIMES" -> 30;
+            case "DYE_SHEEP_30_TIMES" -> 30;
             default -> Integer.MAX_VALUE;
         };
     }
